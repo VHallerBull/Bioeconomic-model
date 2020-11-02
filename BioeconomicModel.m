@@ -1,9 +1,9 @@
-function  [ScenarioName] = BioeconomicModel(T,reserve_scenario,reserve_name,Days_closed,Days_open,PriceFactor)
+function  [ScenarioName] = BioeconomicModel(T,reserve,reserve_name,Days_closed,Days_open,PriceFactor)
 
 % #############################
 % % Inputs
 % % T=time to run model in days
-% % reserve =  vector of all patches that have a reserve status   
+% % reserve =  vector of all patches that have a reserve status
 % % Days_closed = number of days that the reserve is closed
 % % Days_open = number of days that the reserve is opened to fishing
 % %             following the closure
@@ -44,12 +44,10 @@ while length(Sassi)<T
     End=Start+Days_closed+Days_open-1;
 end
 Sassi=Sassi(1:T);
-  
-    
-entrants=3500; %number of fishermen
-    
 
-reserve=reserve_scenario.(reserve_names{m-1});
+
+entrants=3500; %number of fishermen
+
 [XB,XN,H,effort,alpha_av,tot_welfare,price,F,labour,Fit]=PNASloop_nofigs_jns2(entrants, T, alpha,Wage_Var,Cost_Var, Price_Var,...
     q_Var,c_dist,q,reserve,Sassi,PriceFactor);
 Outcome=struct('Biomass',XB,'Number',XN,'Harvest',H,'Effort',...
@@ -59,10 +57,10 @@ Outcome=struct('Biomass',XB,'Number',XN,'Harvest',H,'Effort',...
 TimeTaken(m)=toc;
 save([folder,'/Dataset_reserve.mat'],'Outcome','-v7.3')
 
-
+end
 
 function [XB,XN,H,effort,alpha_av,tot_welfare,price,F,labour,Fit]=PNASloop_nofigs_jns2(entrants, T, alpha,Wage_Var,Cost_Var, Price_Var,...
-q_Var,c_dist,q,reserve,Sassi,PriceFactor)
+    q_Var,c_dist,q,reserve,Sassi,PriceFactor)
 
 discount=.07; % Discount rate
 sigmult2=7000; % controls the variance of the Type I draws
@@ -154,7 +152,7 @@ Group3_CalDataN = 0.9*csvread("./DataSelayar/Group3b_CalDataN.csv");
 XB=struct('Group1',Group1_CalDataB,'Group2',Group2_CalDataB,'Group3',Group3_CalDataB);
 XN=struct('Group1',Group1_CalDataN,'Group2',Group2_CalDataN,'Group3',Group3_CalDataN);
 j=7;
- 
+
 
 
 
@@ -168,7 +166,7 @@ j=7;
 %no_go_sum=n-sum(effort_sum')';
 
 t=1:T;
-         
+
 end
 
 
@@ -183,7 +181,7 @@ end
 
 function [XB,XN,harvest,effort,alpha_av,tot_welfare,price,F,labour,Fit]=pnasmarinereserve2(T,discount,...
     sigmult,n,n_locations,q_ind,alpha_ind,c_dist_ind, distance,dist,dist_ind,XB,XN,Bmax,base_p,c,sigmult2,logitshare,Wage_Var,Cost_Var, Price_Var,...
-q_Var,reserve,Sassi,PriceFactor);
+    q_Var,reserve,Sassi,PriceFactor);
 
 % Calculating the price series
 for i=2:T+1
@@ -230,10 +228,10 @@ for i=2:T+1
     tot_welfare(i)=welfare;
     
     if i==2
-     alpha_av(1:2,1) =[WT;WT];
-     price(1:2,1:3)=[PT;PT];
-     labour(1:2,1)=[LT;LT];
-     harvest(1:2,1:3)=[HT;HT];
+        alpha_av(1:2,1) =[WT;WT];
+        price(1:2,1:3)=[PT;PT];
+        labour(1:2,1)=[LT;LT];
+        harvest(1:2,1:3)=[HT;HT];
     else
         alpha_av(i,1) =[WT];
         price(i,1:3)=[PT];
@@ -249,7 +247,7 @@ for i=2:T+1
     harvest_G2_sum(i,1:n_locations)=sum(H.Group2,1);
     harvest_G3_sum(i,1:n_locations)=sum(H.Group3,1);
     
-
+    
     effort(i,1:n_locations+1)=sum(E_all,1);
     
     if Wage_Var==1
@@ -260,33 +258,33 @@ for i=2:T+1
             WT1=WT;
         else
             Harvest_diff1=(harvest(i,1)-harvest(i-1,1))/((harvest(i-1,1)));
-             Harvest_diff2=(harvest(i,2)-harvest(i-1,2))/((harvest(i-1,2)));
-             Harvest_diff3=(harvest(i,3)-harvest(i-1,3))/((harvest(i-1,3)));
-           
-             if Harvest_diff1>1.4/3.2
-                 Harvest_diff1=1.4/3.2;
-             end
-             if Harvest_diff2>1.4/3.2
-                 Harvest_diff2=1.4/3.2;   
-             end
-              if Harvest_diff3>1.4/3.2
-                  Harvest_diff3=1.4/3.2;
-             end
-             
-             harvest1=price(i,1)-1.4*price(i,1)*Harvest_diff1+1.6*price(i,1)*Harvest_diff1^2;
-             harvest2=price(i,2)-1.4*price(i,2)*Harvest_diff2+1.6*price(i,2)*Harvest_diff2^2;
-             harvest3=price(i,3)-1.4*price(i,3)*Harvest_diff3+1.6*price(i,3)*Harvest_diff3^2;
-             
-             if harvest1>PriceFactor*12900
-                 harvest1=PriceFactor*12900;
-             end
-             if harvest2>PriceFactor*19200
-                 harvest2=PriceFactor*19200;
-             end
-             if harvest3>PriceFactor*15300
-                 harvest3=PriceFactor*15300;
-             end
-             
+            Harvest_diff2=(harvest(i,2)-harvest(i-1,2))/((harvest(i-1,2)));
+            Harvest_diff3=(harvest(i,3)-harvest(i-1,3))/((harvest(i-1,3)));
+            
+            if Harvest_diff1>1.4/3.2
+                Harvest_diff1=1.4/3.2;
+            end
+            if Harvest_diff2>1.4/3.2
+                Harvest_diff2=1.4/3.2;
+            end
+            if Harvest_diff3>1.4/3.2
+                Harvest_diff3=1.4/3.2;
+            end
+            
+            harvest1=price(i,1)-1.4*price(i,1)*Harvest_diff1+1.6*price(i,1)*Harvest_diff1^2;
+            harvest2=price(i,2)-1.4*price(i,2)*Harvest_diff2+1.6*price(i,2)*Harvest_diff2^2;
+            harvest3=price(i,3)-1.4*price(i,3)*Harvest_diff3+1.6*price(i,3)*Harvest_diff3^2;
+            
+            if harvest1>PriceFactor*12900
+                harvest1=PriceFactor*12900;
+            end
+            if harvest2>PriceFactor*19200
+                harvest2=PriceFactor*19200;
+            end
+            if harvest3>PriceFactor*15300
+                harvest3=PriceFactor*15300;
+            end
+            
             PT1=[harvest1,harvest2,harvest3];
             HT1=HT;
             LT1=LT;
@@ -298,41 +296,41 @@ for i=2:T+1
             LT1=LT;
             HT1=HT;
         else
-             Harvest_diff1=(harvest(i,1)-harvest(i-1,1))/((harvest(i-1,1)));
-             Harvest_diff2=(harvest(i,2)-harvest(i-1,2))/((harvest(i-1,2)));
-             Harvest_diff3=(harvest(i,3)-harvest(i-1,3))/((harvest(i-1,3)));
-           
-             if Harvest_diff1>1.4/3.2
-                 Harvest_diff1=1.4/3.2;
-             end
-             if Harvest_diff2>1.4/3.2
-                 Harvest_diff2=1.4/3.2;   
-             end
-              if Harvest_diff3>1.4/3.2
-                  Harvest_diff3=1.4/3.2;
-             end
-             
-             harvest1=price(i,1)-1.4*price(i,1)*Harvest_diff1+1.6*price(i,1)*Harvest_diff1^2;
-             harvest2=price(i,2)-1.4*price(i,2)*Harvest_diff2+1.6*price(i,2)*Harvest_diff2^2;
-             harvest3=price(i,3)-1.4*price(i,3)*Harvest_diff3+1.6*price(i,3)*Harvest_diff3^2;
-             
-             if harvest1>PriceFactor*12900
-                 harvest1=PriceFactor*12900;
-             end
-             if harvest2>PriceFactor*19200
-                 harvest2=PriceFactor*19200;
-             end
-             if harvest3>PriceFactor*15300
-                 harvest3=PriceFactor*15300;
-             end
-             
-             PT1=[harvest1,harvest2,harvest3];
-             HT1=HT;
-             WT1=alpha_av(i,1)-1.13*alpha_av(i,1)*(labour(i,1)-labour(i-1,1))/(labour(i-1,1)+50000);
-             LT1=LT;
-
-
-        end       
+            Harvest_diff1=(harvest(i,1)-harvest(i-1,1))/((harvest(i-1,1)));
+            Harvest_diff2=(harvest(i,2)-harvest(i-1,2))/((harvest(i-1,2)));
+            Harvest_diff3=(harvest(i,3)-harvest(i-1,3))/((harvest(i-1,3)));
+            
+            if Harvest_diff1>1.4/3.2
+                Harvest_diff1=1.4/3.2;
+            end
+            if Harvest_diff2>1.4/3.2
+                Harvest_diff2=1.4/3.2;
+            end
+            if Harvest_diff3>1.4/3.2
+                Harvest_diff3=1.4/3.2;
+            end
+            
+            harvest1=price(i,1)-1.4*price(i,1)*Harvest_diff1+1.6*price(i,1)*Harvest_diff1^2;
+            harvest2=price(i,2)-1.4*price(i,2)*Harvest_diff2+1.6*price(i,2)*Harvest_diff2^2;
+            harvest3=price(i,3)-1.4*price(i,3)*Harvest_diff3+1.6*price(i,3)*Harvest_diff3^2;
+            
+            if harvest1>PriceFactor*12900
+                harvest1=PriceFactor*12900;
+            end
+            if harvest2>PriceFactor*19200
+                harvest2=PriceFactor*19200;
+            end
+            if harvest3>PriceFactor*15300
+                harvest3=PriceFactor*15300;
+            end
+            
+            PT1=[harvest1,harvest2,harvest3];
+            HT1=HT;
+            WT1=alpha_av(i,1)-1.13*alpha_av(i,1)*(labour(i,1)-labour(i-1,1))/(labour(i-1,1)+50000);
+            LT1=LT;
+            
+            
+        end
         
         
     end
@@ -352,90 +350,90 @@ end
 %discrete choice model
 
 function [HT1,LT1,XB,XN,H,E_all,dyn_welfare,fishing_mort]=discreteChoicePriceWage(WT1,q_ind,XB,XN,Bmax,c,c_dist_ind,dist_ind,PT1,n,distance,n_locations,sigmult2,logitshare,Wage_Var,Price_Var,reserve,Sassi )
- % Running the continuous time ordinary differential equations
- n=size(q_ind,1);
- 
- if Wage_Var==3
-     temp=rand(n,1);
- else
-     temp=.5*ones(n,1);% TURNS OFF HETEROGENEITY
- end
- alpha_ind=(WT1 +(WT1).*(((2*temp).^0.5)-1)).*(temp<=0.5)+(WT1 +(WT1).*(1-((2.*(1-temp)).^0.5))).*(temp>0.5);
- 
- if Price_Var==3
-     sigmult=0;
- else
-     sigmult=1000;% TURNS OFF randomness
- end
- 
- p=PT1 + sigmult*randn();
- %p_ind=(PT1 +(PT1).*(((2.*temp).^0.5)-1)).*(temp<=0.5)+(PT1 +(PT1).*(1-((2.*(1-temp)).^0.5))).*(temp>0.5);
+% Running the continuous time ordinary differential equations
+n=size(q_ind,1);
 
- 
- X=[XB.Group1(:,end)';XB.Group2(:,end)';XB.Group3(:,end)'];
- 
- 
- % wage depending on choice
-    vno=alpha_ind*8;
-    vgo=q_ind.*p*X*1000-c-c_dist_ind.*dist_ind'; %p=1*groups; q_ind=entrants*1; X=location*groups;  
+if Wage_Var==3
+    temp=rand(n,1);
+else
+    temp=.5*ones(n,1);% TURNS OFF HETEROGENEITY
+end
+alpha_ind=(WT1 +(WT1).*(((2*temp).^0.5)-1)).*(temp<=0.5)+(WT1 +(WT1).*(1-((2.*(1-temp)).^0.5))).*(temp>0.5);
 
-    %'Individual Welfare Cost Reserve in Patch 1'
-    %welfare=log(exp(vno)+exp(vgo1)+exp(vgo2)+exp(vgo3))-log(exp(vno)+exp(vgo2)+exp(vgo3));
-    welfare=1;
-    
-    sigmult2=8000;
-    randmat=sigmult2*(-log(-log(rand(n,n_locations+1)))); % Type I Extreme Value Errors
-    
-   
-    U0=vno+randmat(:,1); 
-    U=vgo+randmat(:,2:end);
-    
-    if any(reserve)
-        if Sassi(size(XN.Group1,2)-720)==1
-            U(:,reserve)=repelem(0,size(vgo,1),size(reserve,2));
-        end
+if Price_Var==3
+    sigmult=0;
+else
+    sigmult=1000;% TURNS OFF randomness
+end
+
+p=PT1 + sigmult*randn();
+%p_ind=(PT1 +(PT1).*(((2.*temp).^0.5)-1)).*(temp<=0.5)+(PT1 +(PT1).*(1-((2.*(1-temp)).^0.5))).*(temp>0.5);
+
+
+X=[XB.Group1(:,end)';XB.Group2(:,end)';XB.Group3(:,end)'];
+
+
+% wage depending on choice
+vno=alpha_ind*8;
+vgo=q_ind.*p*X*1000-c-c_dist_ind.*dist_ind'; %p=1*groups; q_ind=entrants*1; X=location*groups;
+
+%'Individual Welfare Cost Reserve in Patch 1'
+%welfare=log(exp(vno)+exp(vgo1)+exp(vgo2)+exp(vgo3))-log(exp(vno)+exp(vgo2)+exp(vgo3));
+welfare=1;
+
+sigmult2=8000;
+randmat=sigmult2*(-log(-log(rand(n,n_locations+1)))); % Type I Extreme Value Errors
+
+
+U0=vno+randmat(:,1);
+U=vgo+randmat(:,2:end);
+
+if any(reserve)
+    if Sassi(size(XN.Group1,2)-720)==1
+        U(:,reserve)=repelem(0,size(vgo,1),size(reserve,2));
     end
+end
 
-    E=zeros(n,n_locations);
-    E_all=zeros(n,n_locations+1);
+E=zeros(n,n_locations);
+E_all=zeros(n,n_locations+1);
 
 if logitshare==0; % means we use Type I Draws
     UALL=[U0,U];
     [maxU,ychoice]=max(UALL');
     
-    LinIdx = sub2ind(size(E_all),[1:n]', ychoice'); 
+    LinIdx = sub2ind(size(E_all),[1:n]', ychoice');
     E_all(LinIdx)=1; % zeros besides location where they fish
     E0no=E_all(:,1);
     E=E_all(:,2:n_locations+1);
     dyn_welfare= sum([vno,vgo].*E_all,'all'); %log(exp(vno)+ exp(vgo1)+ exp(vgo2)+exp(vgo3));
 else  % Means we use shares from the logit probabilities (smoother)
-        UALL=[U0,U];
-        [maxU,ychoice]=max(UALL');
-        vno_exp=exp(vno);
-        vgo_exp=exp(vgo);
-        E0no=(vno_exp)./(vno_exp+sum(vgo_exp,2));
-        E= (vgo_exp)./(vno_exp+sum(vgo_exp,2));
-
-        dyn_welfare=log(sum(vno_exp)+sum(vgo_exp,'all')); 
+    UALL=[U0,U];
+    [maxU,ychoice]=max(UALL');
+    vno_exp=exp(vno);
+    vgo_exp=exp(vgo);
+    E0no=(vno_exp)./(vno_exp+sum(vgo_exp,2));
+    E= (vgo_exp)./(vno_exp+sum(vgo_exp,2));
+    
+    dyn_welfare=log(sum(vno_exp)+sum(vgo_exp,'all'));
 end
-    
-    Group1_H=q_ind(:,1).*E*X(1,:)';
-    Group2_H=q_ind(:,2).*E*X(2,:)';
-    Group3_H=q_ind(:,3).*E*X(3,:)';
-    H=struct('Group1',Group1_H,'Group2',Group2_H,'Group3',Group3_H);
-    HT1=[sum(Group1_H,'all'),sum(Group2_H,'all'),sum(Group3_H,'all')];
-    % H_loc=[sum(Group1_H,1),sum(Group2_H,1),sum(Group3_H,1)];
-    LT1=sum(E0no);
-    
-    fishing_mort=[sum(q_ind(:,1)*365.*E,1);sum(q_ind(:,2)*365.*E,1);sum(q_ind(:,3)*365.*E,1)];
-    
-    [t1,x1]= ode45(@biology1,[0 1/365],[XB.Group1(:,end);XN.Group1(:,end);],[],XB.Group1,repelem(Bmax(1,1),161)',XN.Group1,distance,fishing_mort(1,:));
-    [t2,x2]= ode45(@biology2,[0 1/365],[XB.Group2(:,end);XN.Group2(:,end);],[],XB.Group2,repelem(Bmax(1,2),161)',XN.Group2,distance,fishing_mort(2,:));
-    [t3,x3]= ode45(@biology3,[0 1/365],[XB.Group3(:,end);XN.Group3(:,end);],[],XB.Group3,repelem(Bmax(1,3),161)',XN.Group3,distance,fishing_mort(3,:));
-    
-    
-    XB= struct('Group1',[XB.Group1,x1(end,1:n_locations)'],'Group2',[XB.Group2,x2(end,1:n_locations)'],'Group3',[XB.Group3,x3(end,1:n_locations)']);
-    XN= struct('Group1',[XN.Group1,x1(end,n_locations+1:end)'],'Group2',[XN.Group2,x2(end,n_locations+1:end)'],'Group3',[XN.Group3,x3(end,n_locations+1:end)']);
+
+Group1_H=q_ind(:,1).*E*X(1,:)';
+Group2_H=q_ind(:,2).*E*X(2,:)';
+Group3_H=q_ind(:,3).*E*X(3,:)';
+H=struct('Group1',Group1_H,'Group2',Group2_H,'Group3',Group3_H);
+HT1=[sum(Group1_H,'all'),sum(Group2_H,'all'),sum(Group3_H,'all')];
+% H_loc=[sum(Group1_H,1),sum(Group2_H,1),sum(Group3_H,1)];
+LT1=sum(E0no);
+
+fishing_mort=[sum(q_ind(:,1)*365.*E,1);sum(q_ind(:,2)*365.*E,1);sum(q_ind(:,3)*365.*E,1)];
+
+[t1,x1]= ode45(@biology1,[0 1/365],[XB.Group1(:,end);XN.Group1(:,end);],[],XB.Group1,repelem(Bmax(1,1),161)',XN.Group1,distance,fishing_mort(1,:));
+[t2,x2]= ode45(@biology2,[0 1/365],[XB.Group2(:,end);XN.Group2(:,end);],[],XB.Group2,repelem(Bmax(1,2),161)',XN.Group2,distance,fishing_mort(2,:));
+[t3,x3]= ode45(@biology3,[0 1/365],[XB.Group3(:,end);XN.Group3(:,end);],[],XB.Group3,repelem(Bmax(1,3),161)',XN.Group3,distance,fishing_mort(3,:));
+
+
+XB= struct('Group1',[XB.Group1,x1(end,1:n_locations)'],'Group2',[XB.Group2,x2(end,1:n_locations)'],'Group3',[XB.Group3,x3(end,1:n_locations)']);
+XN= struct('Group1',[XN.Group1,x1(end,n_locations+1:end)'],'Group2',[XN.Group2,x2(end,n_locations+1:end)'],'Group3',[XN.Group3,x3(end,n_locations+1:end)']);
 
 end
 
@@ -463,7 +461,7 @@ w_inf = 0.009; %weight at age infinity
 
 age = 550; %age in days from spawning to recruitment
 sigma_A= 1.5; %distance that the species can travel based on home range (single
-            %number)
+%number)
 sigma_L= 36;
 Bt=X(1:161);
 
@@ -476,8 +474,8 @@ dispmat= dispmat1./repmat(sum(dispmat1,2),[1,size(Bt)]);
 
 %%Recruitement
 if timepoint==0 %Time at which recruitment occurs
-
-   % Calculate reference points
+    
+    % Calculate reference points
     B0s = Bmax .* habitat_avail' .* habitat_quality';
     %B0 = nansum(B0s);
     S0s = nansum((B0s' .* dispmat),1); % unfished larval settlement
@@ -495,19 +493,19 @@ if timepoint==0 %Time at which recruitment occurs
     else
         Bpast= B(:,days-age); %set to ? days in the past
     end
-   
+    
     
     
     %%Calculate recruitement
     Sin = nansum((Bpast .* dispmat),1); % larval output *Check size of matrix/vectors
     Rpast = alpha ./ (1 + beta .* Sin) .* Sin; %recruitment
     Rpast=Rpast;
- 
+    
 else Rpast=repelem(0,161);
 end
 
 
-Recruitment = wR.*Rpast; 
+Recruitment = wR.*Rpast;
 
 %%Set mortality
 Zt = fishing_mort + repelem(natural_mort,size(fishing_mort,2));
@@ -526,12 +524,12 @@ Immigration = sum(Adults_moved,1)'-Adults_moved(:,1);
 
 %%Calculate growth of existing population
 Nt=X(162:322)';
-Growth = p.*w_inf.*Nt;     
+Growth = p.*w_inf.*Nt;
 
 %%Combine all and calculate biomass
- dydt = [Recruitment' + Growth' + Immigration - Emigration - Mortality;Rpast' - Zt'.*Nt'];
- %this creates a matrix with each row being the biomass of each cell,
- %followed by the number in each cell; the columns are time
+dydt = [Recruitment' + Growth' + Immigration - Emigration - Mortality;Rpast' - Zt'.*Nt'];
+%this creates a matrix with each row being the biomass of each cell,
+%followed by the number in each cell; the columns are time
 
 
 
@@ -559,7 +557,7 @@ w_inf = 0.005; %weight at age infinity
 
 age = 470; %age in days from spawning to recruitment
 sigma_A= 5; %distance that the species can travel based on home range (single
-            %number)
+%number)
 sigma_L= 14;
 Bt=X(1:161);
 
@@ -580,7 +578,7 @@ if timepoint==0 %Time at which recruitment occurs
     R0s = (1 - s' - (p * s') + (p * s'.^2)) .* B0s ./ (wR - p * s' * wP);  % normalized virgin recruitment
     SPRcrit = (1 - h) / (4*h); % critical replacement threshold
     corrFac = max(eig(dispmat)); % correct SPRcrit if dispersal matrix is real or simulated (i.e. not idealized)
-     compratCorr = 1 / (SPRcrit ./ corrFac); % apply correction to compensation ratio if needed
+    compratCorr = 1 / (SPRcrit ./ corrFac); % apply correction to compensation ratio if needed
     alpha = compratCorr .* R0s' ./ S0s; % calculate Beverton-Holt parameter 1 (after Walters et al 2007)
     beta = (compratCorr - 1) ./ S0s; % calculate Beverton-Holt parameter 2 (after Walters et al 2007)
     R0s = alpha ./ (1 + beta .* S0s) .* S0s; % calculate virgin recruitment
@@ -590,19 +588,19 @@ if timepoint==0 %Time at which recruitment occurs
     else
         Bpast= B(:,days-age); %set to ? days in the past
     end
-   
+    
     
     
     %%Calculate recruitement
     Sin = nansum((Bpast .* dispmat),1); % larval output *Check size of matrix/vectors
     Rpast = alpha ./ (1 + beta .* Sin) .* Sin; %recruitment
     Rpast=Rpast;
- 
+    
 else Rpast=repelem(0,161);
 end
 
 
-Recruitment = wR.*Rpast; 
+Recruitment = wR.*Rpast;
 
 
 
@@ -623,12 +621,12 @@ Immigration = sum(Adults_moved,1)'-Adults_moved(:,1);
 
 %%Calculate growth of existing population
 Nt=X(162:322)';
-Growth = p.*w_inf.*Nt;     
+Growth = p.*w_inf.*Nt;
 
 %%Combine all and calculate biomass
- dydt = [Recruitment' + Growth' + Immigration - Emigration - Mortality;Rpast' - Zt'.*Nt'];
- %this creates a matrix with each row being the biomass of each cell,
- %followed by the number in each cell; the columns are time
+dydt = [Recruitment' + Growth' + Immigration - Emigration - Mortality;Rpast' - Zt'.*Nt'];
+%this creates a matrix with each row being the biomass of each cell,
+%followed by the number in each cell; the columns are time
 
 
 end
@@ -657,7 +655,7 @@ w_inf = 0.005; %weight at age infinity
 
 age = 730; %age in days from spawning to recruitment
 sigma_A= 50; %distance that the species can travel based on home range (single
-            %number)
+%number)
 sigma_L= 15;
 Bt=X(1:161);
 
@@ -689,19 +687,19 @@ if timepoint==0 %Time at which recruitment occurs
     else
         Bpast= B(:,days-age); %set to ? days in the past
     end
-   
+    
     
     
     %%Calculate recruitement
     Sin = nansum((Bpast .* dispmat),1); % larval output *Check size of matrix/vectors
     Rpast = alpha ./ (1 + beta .* Sin) .* Sin; %recruitment
     Rpast=Rpast;
- 
+    
 else Rpast=repelem(0,161);
 end
 
 
-Recruitment = wR.*Rpast; 
+Recruitment = wR.*Rpast;
 
 
 %%Set mortality
@@ -721,13 +719,13 @@ Immigration = sum(Adults_moved,1)'-Adults_moved(:,1);
 
 %%Calculate growth of existing population
 Nt=X(162:322)';
-Growth = p.*w_inf.*Nt;     
+Growth = p.*w_inf.*Nt;
 
 
 %%Combine all and calculate biomass
- dydt = [Recruitment' + Growth' + Immigration - Emigration - Mortality;Rpast' - Zt'.*Nt'];
- %this creates a matrix with each row being the biomass of each cell,
- %followed by the number in each cell; the columns are time
+dydt = [Recruitment' + Growth' + Immigration - Emigration - Mortality;Rpast' - Zt'.*Nt'];
+%this creates a matrix with each row being the biomass of each cell,
+%followed by the number in each cell; the columns are time
 
 
 
