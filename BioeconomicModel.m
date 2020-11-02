@@ -30,7 +30,7 @@ Price_Var=2;
 q_Var=1;
 
 
-folder =[reserve_name,'_Closed',num2str(Days_closed),'_Open',num2str(Days_open),'_PriceFactor',num2str(PriceFactor)];%folder to save results created through the function inputs
+folder =['Results/',reserve_name,'_Closed',num2str(Days_closed),'_Open',num2str(Days_open),'_PriceFactor',num2str(PriceFactor)];%folder to save results created through the function inputs
 mkdir(folder)
 
 %Set up Sassi reserve, 1=reserve open, 0=reserve closed
