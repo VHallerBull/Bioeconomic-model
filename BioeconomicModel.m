@@ -11,6 +11,8 @@ function  [ScenarioName] = BioeconomicModel(T,reserve,reserve_name,Days_closed,D
 % %               price
 
 
+
+
 % Setting the economic inputs
 alpha=7800; %wage
 c_dist=20000; %cost per distance
@@ -30,8 +32,7 @@ Price_Var=2;
 q_Var=1;
 
 
-folder =['Results/',reserve_name,'_Closed',num2str(Days_closed),'_Open',num2str(Days_open),'_PriceFactor',num2str(PriceFactor)];%folder to save results created through the function inputs
-mkdir(folder)
+
 
 %Set up Sassi reserve, 1=reserve open, 0=reserve closed
 Start=1;
@@ -54,8 +55,9 @@ Outcome=struct('Biomass',XB,'Number',XN,'Harvest',H,'Effort',...
     effort,'Wage',alpha_av,'TotalIncome',tot_welfare,'Price',...
     price,'FishingMortality',F,'NumberNotFishing',...
     labour);
-
-save([folder,'/Dataset_reserve.mat'],'Outcome','-v7.3')
+	
+cd /30days/uqvhall1
+save([reserve_name,'_Closed',num2str(Days_closed),'_Open',num2str(Days_open),'_PriceFactor',num2str(PriceFactor),'.mat'],'Outcome','-v7.3')
 
 end
 
